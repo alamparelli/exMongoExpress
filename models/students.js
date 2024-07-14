@@ -15,6 +15,11 @@ const userSchema = new mongoose.Schema({
 		required: true,
 		type: String,
 	},
+	status: {
+		enum: ['active', 'inactive'],
+		required: false,
+		type: String,
+	},
 });
 
 export const Student = mongoose.model('ExpressExercices', userSchema);

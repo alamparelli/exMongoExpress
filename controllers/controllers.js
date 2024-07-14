@@ -10,9 +10,9 @@ export const getEx1 = async (req, res) => {
 };
 
 export const getEx3 = async (req, res) => {
-	let response = { city: req.params.city };
+	let query = { city: req.params.city };
 	try {
-		const answer = await Student.find(response);
+		const answer = await Student.find(query);
 		res.json(answer);
 	} catch (error) {
 		res.status(406).send(error);
@@ -105,7 +105,7 @@ export const setEx8 = async (req, res) => {
 };
 
 export const setEx9 = async (req, res) => {
-	let query = { city: { $in: ['Ghent', 'Bruges'] } };
+	let query = { city: { $in: ['Ghent', 'Brussels'] } };
 	try {
 		const answer = await Student.deleteMany(query);
 		await res.status(201).send(answer);
