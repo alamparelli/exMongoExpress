@@ -10,12 +10,17 @@ export const getEx1 = async (req, res) => {
 };
 
 export const getEx3 = async (req, res) => {
-	let query = { city: req.params.city };
-	try {
-		const answer = await Student.find(query);
-		res.json(answer);
-	} catch (error) {
-		res.status(406).send(error);
+	const value = req.body.city;
+	if (typeof value !== 'string') {
+		res.status(406).send({ error: 'String Expected' });
+	} else {
+		try {
+			let query = { city: value };
+			const answer = await Student.find(query);
+			res.status(200).json(answer);
+		} catch (error) {
+			res.status(406).send(error);
+		}
 	}
 };
 
@@ -62,13 +67,32 @@ export const setEx1 = async (req, res) => {
 };
 
 export const setEx4 = async (req, res) => {
-	let query = { name: req.params.name };
-	let update = { $set: { age: Number(req.params.age) } };
-	try {
-		const answer = await Student.updateMany(query, update);
-		await res.status(201).send(answer);
-	} catch (error) {
-		res.status(406).send(error);
+	const ageValue = req.body.age;
+	const nameValue = req.body.name;
+	console.log(typeof ageValue);
+	console.log(typeof nameValue);
+	if (
+		typeof nameValue !== 'string' ||
+		typeof ageValue !== 'number' ||
+		ageValue < 1 ||
+		ageValue > 120
+	) {
+		res.status(406).send({
+			errorNumber: { max: 120, min: 1, typoeOf: 'Number expected for age' },
+			errorString: 'String Expected for name',
+		});
+	} else {
+		let query = { name: nameValue };
+		let update = { $set: { age: Number(ageValue), lastModified: Date.now() } };
+		try {
+			const before = await Student.find(query);
+			const _answer = await Student.updateMany(query, update);
+			const after = await Student.find(query);
+			let response = { _answer, after, before };
+			await res.status(201).send(response);
+		} catch (error) {
+			res.status(406).send(error);
+		}
 	}
 };
 

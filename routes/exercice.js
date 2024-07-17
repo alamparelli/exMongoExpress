@@ -25,8 +25,8 @@ router.use(getConStatus);
 
 router.route('/createUser').post(setEx1); //and createone (post)
 router.route('/users').get(getEx1); //*findall (get)
-router.route('/city/:city').get(getEx3); //* find by City
-router.route('/updateAge/:name/:age').put(setEx4); //* updateAge
+router.route('/city').get(getEx3); //* find by City
+router.route('/updateAge').put(setEx4); //* updateAge
 router.route('/deleteOne/:name').get(getEx5).delete(setEx5); //* deletOne
 router.route('/insertOne').put(setEx6); //* insertOne
 router.route('/age').get(getEx7); //* find by age

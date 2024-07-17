@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import validator from 'validator';
 
 const userSchema = new mongoose.Schema({
 	age: {
@@ -11,7 +12,7 @@ const userSchema = new mongoose.Schema({
 		required: true,
 		type: String,
 	},
-	lastmModified: {
+	lastModified: {
 		required: false,
 		type: Date,
 	},
