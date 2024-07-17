@@ -11,6 +11,10 @@ const userSchema = new mongoose.Schema({
 		required: true,
 		type: String,
 	},
+	lastmModified: {
+		required: false,
+		type: Date,
+	},
 	name: {
 		required: true,
 		type: String,

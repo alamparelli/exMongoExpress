@@ -1,4 +1,4 @@
-/* eslint-disable sort-imports */
+// OLD VERSION DEPRECATED --> check mDatabase.js
 import { configDotenv } from 'dotenv';
 import { MongoClient } from 'mongodb';
 
