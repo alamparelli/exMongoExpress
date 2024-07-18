@@ -16,18 +16,16 @@ import {
 	updateAge,
 } from '../controllers/controllers.js';
 import {
+	errorHandler,
 	getConStatus,
 	honeyPot,
-	showErrors,
+	toLog,
 } from '../middleWare/catchErrors.js';
-import { log } from '../middleWare/logger.js';
-import { isBodyValuesValids } from '../middleWare/validateBody.js';
 
 const router = express.Router();
 //! Important to remember
 router.use(express.json());
 router.use(getConStatus);
-router.use(isBodyValuesValids);
 
 router.route('/createUser').post(createUser); //and createone (post)
 router.route('/users').get(getUsers); //*findall (get)
@@ -41,9 +39,9 @@ router.route('/deleteByCity').get(getUsers).delete(deleteByCity); //* deleteMany
 router.route('/sumBrussels').delete(getSum); //* Get sum of document where Brussels
 router.route('/id').delete(deleteId);
 router.route('/dropEx1').delete(dropEx1); //* delete
-router.route('/:otherPages').all(honeyPot);
+router.route('/:others').all(honeyPot);
 
-router.use(log);
-router.use(showErrors);
+router.use(errorHandler);
+router.use(toLog);
 
 export default router;

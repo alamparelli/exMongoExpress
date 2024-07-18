@@ -1,3 +1,4 @@
+import { isBodyValuesValids } from '../middleWare/validateBody.js';
 import { Student } from '../models/students.js';
 
 export const getUsers = async (req, res, next) => {
@@ -5,30 +6,32 @@ export const getUsers = async (req, res, next) => {
 		const answer = await Student.find();
 		res.status(200).json(answer);
 	} catch (error) {
+		error.block = 'getUsers';
 		next(error);
 	}
 };
 
 export const getCity = async (req, res, next) => {
 	try {
+		if (!isBodyValuesValids(req.body)) {
+			throw new Error('City should be a string');
+		}
 		if (!req.body.city) {
 			throw new Error('City is Required');
 		}
 		let query = { city: req.body.city };
 		const answer = await Student.find(query);
-		res.status(200).json(answer);
 	} catch (error) {
-		res.log = {
-			date: Date.now(),
-			errorCode: 500,
-			errorMessage: error,
-		};
-		next();
+		error.block = 'getCity';
+		next(error);
 	}
 };
 
 export const getDelete = async (req, res, next) => {
 	try {
+		if (!isBodyValuesValids(req.body)) {
+			throw new Error('Name should be a string');
+		}
 		if (!req.body.name) {
 			throw new Error('Name is Required');
 		}
@@ -36,12 +39,16 @@ export const getDelete = async (req, res, next) => {
 		const answer = await Student.find(query);
 		await res.status(200).send(answer);
 	} catch (error) {
+		error.block = 'getDelete';
 		next(error);
 	}
 };
 
 export const getByAge = async (req, res, next) => {
 	try {
+		if (!isBodyValuesValids(req.body)) {
+			throw new Error('Age should be a Number');
+		}
 		if (!req.body.age) {
 			throw new Error('Age is Required');
 		}
@@ -49,7 +56,8 @@ export const getByAge = async (req, res, next) => {
 		const answer = await Student.find(query);
 		res.json(answer);
 	} catch (error) {
-		next('Cannot Filter by Age');
+		error.block = 'getByAge';
+		next(error);
 	}
 };
 
@@ -62,26 +70,36 @@ export const getSum = async (req, res, next) => {
 		const answer = await Student.aggregate(pipeline);
 		res.json(answer);
 	} catch (error) {
+		error.block = 'getSum';
 		next(error);
 	}
 };
 
 export const createUser = async (req, res, next) => {
 	try {
+		if (!isBodyValuesValids(req.body)) {
+			throw new Error({
+				age: 'should be a number (min 1, max 120)',
+				city: 'should be a string',
+				name: 'should be a string',
+			});
+		}
 		const answer = await Student.insertMany(req.body);
-		await res.send(answer);
+		res.send(answer);
 	} catch (error) {
-		res.log = {
-			date: Date.now(),
-			errorCode: 500,
-			errorMessage: error,
-		};
-		next();
+		error.block = 'createUser';
+		next(error);
 	}
 };
 
 export const updateAge = async (req, res, next) => {
 	try {
+		if (!isBodyValuesValids(req.body)) {
+			throw new Error({
+				age: 'should be a number (min 1, max 120)',
+				name: 'should be a string',
+			});
+		}
 		if (!req.body.age || !req.body.name) {
 			throw new Error('Age & Name are Required');
 		}
@@ -95,12 +113,18 @@ export const updateAge = async (req, res, next) => {
 		let response = { _answer, after, before };
 		await res.status(201).send(response);
 	} catch (error) {
+		error.block = 'updateAge';
 		next(error);
 	}
 };
 
 export const deleteOneUser = async (req, res, next) => {
 	try {
+		if (!isBodyValuesValids(req.body)) {
+			throw new Error({
+				name: 'should be a string',
+			});
+		}
 		if (!req.body.name) {
 			throw new Error('Name is Required');
 		}
@@ -108,12 +132,20 @@ export const deleteOneUser = async (req, res, next) => {
 		const answer = await Student.deleteOne(query);
 		await res.status(201).send(answer);
 	} catch (error) {
+		error.block = 'deleteOneUser';
 		next(error);
 	}
 };
 
 export const setOne = async (req, res, next) => {
 	try {
+		if (!isBodyValuesValids(req.body)) {
+			throw new Error({
+				age: 'should be a number (min 1, max 120)',
+				city: 'should be a String',
+				name: 'should be a string',
+			});
+		}
 		const newStudent = new Student({
 			age: req.body.age,
 			city: req.body.city,
@@ -122,6 +154,7 @@ export const setOne = async (req, res, next) => {
 		newStudent.save();
 		await res.status(201).send(newStudent);
 	} catch (error) {
+		error.block = 'setOne';
 		next(error);
 	}
 };
@@ -133,6 +166,7 @@ export const setActive40 = async (req, res, next) => {
 		const answer = await Student.updateMany(query, update);
 		await res.status(201).send(answer);
 	} catch (error) {
+		error.block = 'setActive40';
 		next(error);
 	}
 };
@@ -143,6 +177,7 @@ export const deleteByCity = async (req, res, next) => {
 		const answer = await Student.deleteMany(query);
 		await res.status(201).send(answer);
 	} catch (error) {
+		error.block = 'deleteByCity';
 		next(error);
 	}
 };
@@ -152,21 +187,23 @@ export const dropEx1 = async (req, res, next) => {
 		const answer = await Student.drop();
 		await res.send(answer);
 	} catch (error) {
+		error.block = 'dropEx1';
 		next(error);
 	}
 };
 
 export const deleteId = async (req, res, next) => {
 	try {
+		if (!isBodyValuesValids(req.body)) {
+			throw new Error({
+				_id: 'should be a valid ID in the DB',
+			});
+		}
 		let query = { _id: req.body._id };
 		const answer = await Student.findByIdAndDelete(query);
 		await res.send(answer);
 	} catch (error) {
-		res.log = {
-			date: Date.now(),
-			errorCode: 406,
-			errorMessage: error,
-		};
-		next();
+		error.block = 'deleteId';
+		next(error);
 	}
 };

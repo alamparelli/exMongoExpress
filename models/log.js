@@ -1,18 +1,26 @@
 import mongoose from 'mongoose';
 
 const LogSchema = new mongoose.Schema({
+	block: {
+		required: true,
+		type: String,
+	},
+	code: {
+		required: true,
+		type: String,
+	},
 	date: {
 		required: true,
 		type: Date,
 	},
-	errorCode: {
+	message: {
 		required: true,
-		type: Number,
+		type: String,
 	},
-	errorMessage: {
-		required: true,
-		type: [String, Object],
+	method: {
+		required: false,
+		type: String,
 	},
 });
 
-export const Log = mongoose.model('ErrorLogs', LogSchema);
+export const Logs = mongoose.model('logs', LogSchema);

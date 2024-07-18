@@ -1,5 +1,7 @@
 import mongoose from 'mongoose';
 
+import { Logs } from '../models/log.js';
+
 export const getConStatus = async (req, res, next) => {
 	try {
 		const status = mongoose.connection.readyState;
@@ -16,36 +18,33 @@ export const getConStatus = async (req, res, next) => {
 	}
 };
 
-export const honeyPot = async (req, res, next) => {
+export const errorHandler = (err, req, res, next) => {
+	//console.error(err.stack); // Log de l'erreur
+	if (!err.code) {
+		err.code = 500;
+	}
 	res
-		.status(404)
-		.json({ Error: 'Not Found xD', path: `${req.params.otherPages}` });
-	res.log = {
+		.status(err.code)
+		.json({ error: err.message, message: 'Something went wrong!' }); // Réponse JSON avec le message d'erreur
+	next({
+		block: err.block,
+		code: err.code,
 		date: Date.now(),
-		errorCode: 404,
-		errorMessage: `Path Not Found :  ${req.params.otherPages}`,
-	};
-	next();
+		message: err.message,
+		method: err.method,
+	});
 };
 
-export const showErrors = async (err, req, res, next) => {
-	let httpCode;
-	switch (err.code) {
-		case 11000:
-			httpCode = 500;
-			break;
-		case 404:
-			httpCode = 500;
-			break;
-		default:
-			httpCode = 500;
-			break;
-	}
-	res.status(httpCode).json(err);
-	res.log = {
-		date: Date.now(),
-		errorCode: httpCode,
-		errorMessage: err,
-	};
-	next(); // next will be another middleware to create the logs
+export const toLog = async (err, req, res, next) => {
+	const newLog = new Logs(err);
+	await newLog.save();
+	console.log(err);
+};
+
+export const honeyPot = async (req, res, next) => {
+	const error = new Error(`Path not found ${req.url}`);
+	error.method = req.method;
+	error.code = 404;
+	error.block = 'honeyPot';
+	next(error);
 };
