@@ -18,6 +18,7 @@ const userSchema = new mongoose.Schema({
 	name: {
 		required: true,
 		type: String,
+		unique: true,
 	},
 	status: {
 		enum: ['active', 'inactive'],
