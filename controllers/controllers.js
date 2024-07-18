@@ -1,6 +1,6 @@
 import { Student } from '../models/students.js';
 
-export const getEx1 = async (req, res) => {
+export const getUsers = async (req, res) => {
 	try {
 		const answer = await Student.find();
 		res.status(200).json(answer);
@@ -9,7 +9,7 @@ export const getEx1 = async (req, res) => {
 	}
 };
 
-export const getEx3 = async (req, res) => {
+export const getCity = async (req, res) => {
 	const value = req.body.city;
 	if (typeof value !== 'string') {
 		res.status(406).send({ error: 'String Expected' });
@@ -24,7 +24,7 @@ export const getEx3 = async (req, res) => {
 	}
 };
 
-export const getEx5 = async (req, res) => {
+export const getDelete = async (req, res) => {
 	const nameValue = req.body.name;
 	if (typeof nameValue !== 'string') {
 		res.status(406).send({
@@ -41,7 +41,7 @@ export const getEx5 = async (req, res) => {
 	}
 };
 
-export const getEx7 = async (req, res) => {
+export const getByAge = async (req, res) => {
 	const ageValue = req.body.age;
 	if (typeof ageValue !== 'number' || ageValue < 1 || ageValue > 120) {
 		res.status(406).send({
@@ -59,7 +59,7 @@ export const getEx7 = async (req, res) => {
 	}
 };
 
-export const getEx10 = async (req, res) => {
+export const getSum = async (req, res) => {
 	const pipeline = [
 		{ $match: { city: 'Brussels' } },
 		{ $group: { _id: '$city', count: { $sum: 1 } } },
@@ -97,7 +97,7 @@ export const updateAge = async (req, res) => {
 	}
 };
 
-export const setEx5 = async (req, res) => {
+export const deleteOneUser = async (req, res) => {
 	const nameValue = req.body.name;
 	if (typeof nameValue !== 'string') {
 		res.status(406).send({
@@ -114,7 +114,7 @@ export const setEx5 = async (req, res) => {
 	}
 };
 
-export const setEx6 = async (req, res) => {
+export const setOne = async (req, res) => {
 	try {
 		const { age, city, name } = req.body;
 		const newStudent = new Student({ age: age, city: city, name: name });
@@ -125,7 +125,7 @@ export const setEx6 = async (req, res) => {
 	}
 };
 
-export const setEx8 = async (req, res) => {
+export const setActive40 = async (req, res) => {
 	let query = { age: { $lte: 40 } };
 	let update = { $set: { status: 'active' } };
 	try {
@@ -136,7 +136,7 @@ export const setEx8 = async (req, res) => {
 	}
 };
 
-export const setEx9 = async (req, res) => {
+export const deleteByCity = async (req, res) => {
 	let query = { city: { $in: ['Ghent', 'Brussels'] } };
 	try {
 		const answer = await Student.deleteMany(query);
