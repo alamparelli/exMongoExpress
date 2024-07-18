@@ -10,6 +10,15 @@ export const isBodyValuesValids = async (req, res, next) => {
 			};
 		}
 	}
+	if (req.body.city) {
+		let cityValue = req.body.city;
+		if (typeof cityValue !== 'string') {
+			isValid = false;
+			errorMessage.City = {
+				typoeOf: 'String expected for city',
+			};
+		}
+	}
 	if (req.body.age) {
 		let ageValue = req.body.age;
 		if (typeof ageValue !== 'number' || ageValue < 1 || ageValue > 120) {
