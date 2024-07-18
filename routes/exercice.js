@@ -22,8 +22,9 @@ const router = express.Router();
 //! Important to remember
 router.use(express.json());
 router.use(getConStatus);
+router.use(isBodyValuesValids);
 
-router.route('/createUser').post(isBodyValuesValids, createUser); //and createone (post)
+router.route('/createUser').post(createUser); //and createone (post)
 router.route('/users').get(getUsers); //*findall (get)
 router.route('/city').get(getCity); //* find by City
 router.route('/updateAge').put(updateAge); //* updateAge
