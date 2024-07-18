@@ -1,6 +1,6 @@
 import express from 'express';
 
-import { getConStatus } from '../controllers/catchErrors.js';
+import { getConStatus, showErrors } from '../controllers/catchErrors.js';
 import {
 	createUser,
 	deleteByCity,
@@ -24,7 +24,7 @@ router.use(express.json());
 router.use(getConStatus);
 router.use(isBodyValuesValids);
 
-router.route('/createUser').post(createUser); //and createone (post)
+router.route('/createUser').post(createUser, showErrors); //and createone (post)
 router.route('/users').get(getUsers); //*findall (get)
 router.route('/city').get(getCity); //* find by City
 router.route('/updateAge').put(updateAge); //* updateAge

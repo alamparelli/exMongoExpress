@@ -61,12 +61,12 @@ export const getSum = async (req, res) => {
 	}
 };
 
-export const createUser = async (req, res) => {
+export const createUser = async (req, res, next) => {
 	try {
 		const answer = await Student.insertMany(req.body);
 		await res.send(answer);
 	} catch (error) {
-		res.status(406).json(error);
+		next(error);
 	}
 };
 
