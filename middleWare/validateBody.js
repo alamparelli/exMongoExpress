@@ -1,6 +1,6 @@
 export const isBodyValuesValids = async (req, res, next) => {
 	let isValid = true;
-	let errorMessage = {};
+	let errorMessage = { ErrorType: 'Validation' };
 	if (req.body.name) {
 		let nameValue = req.body.name;
 		if (typeof nameValue !== 'string') {
@@ -31,6 +31,11 @@ export const isBodyValuesValids = async (req, res, next) => {
 		}
 	}
 	if (!isValid) {
+		res.log = {
+			date: Date.now(),
+			errorCode: 406,
+			errorMessage: errorMessage,
+		};
 		res.status(406).json(errorMessage);
 	} else {
 		next();
