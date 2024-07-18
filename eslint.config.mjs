@@ -16,7 +16,7 @@ export default [
 			'no-unused-vars': 'off',
 			'no-useless-return': 'error',
 			'no-var': 'error',
-			'sort-imports': 'error',
+			'sort-imports': 'off',
 		},
 	},
 ];

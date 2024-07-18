@@ -25,22 +25,37 @@ export const getEx3 = async (req, res) => {
 };
 
 export const getEx5 = async (req, res) => {
-	let query = { name: req.params.name };
-	try {
-		const answer = await Student.find(query);
-		res.json(answer);
-	} catch (error) {
-		res.status(406).send(error);
+	const nameValue = req.body.name;
+	if (typeof nameValue !== 'string') {
+		res.status(406).send({
+			errorString: 'String Expected for name',
+		});
+	} else {
+		let query = { name: nameValue };
+		try {
+			const answer = await Student.find(query);
+			await res.status(200).send(answer);
+		} catch (error) {
+			res.status(406).send(error);
+		}
 	}
 };
 
 export const getEx7 = async (req, res) => {
-	let response = { age: { $gte: Number(req.params.age) } };
-	try {
-		const answer = await Student.find(response);
-		res.json(answer);
-	} catch (error) {
-		res.status(406).send('Cannot filter by age');
+	const ageValue = req.body.age;
+	if (typeof ageValue !== 'number' || ageValue < 1 || ageValue > 120) {
+		res.status(406).send({
+			errorNumber: { max: 120, min: 1, typoeOf: 'Number expected for age' },
+		});
+	} else {
+		let query = { age: { $gte: Number(ageValue) } };
+
+		try {
+			const answer = await Student.find(query);
+			res.json(answer);
+		} catch (error) {
+			res.status(406).send('Cannot filter by age');
+		}
 	}
 };
 
@@ -57,52 +72,45 @@ export const getEx10 = async (req, res) => {
 	}
 };
 
-export const setEx1 = async (req, res) => {
+export const createUser = async (req, res) => {
 	try {
 		const answer = await Student.insertMany(req.body);
 		await res.send(answer);
 	} catch (error) {
-		res.status(406).send(error);
+		res.status(406).json(error);
 	}
 };
 
-export const setEx4 = async (req, res) => {
-	const ageValue = req.body.age;
-	const nameValue = req.body.name;
-	console.log(typeof ageValue);
-	console.log(typeof nameValue);
-	if (
-		typeof nameValue !== 'string' ||
-		typeof ageValue !== 'number' ||
-		ageValue < 1 ||
-		ageValue > 120
-	) {
-		res.status(406).send({
-			errorNumber: { max: 120, min: 1, typoeOf: 'Number expected for age' },
-			errorString: 'String Expected for name',
-		});
-	} else {
+export const updateAge = async (req, res) => {
+	try {
+		const ageValue = req.body.age;
+		const nameValue = req.body.name;
 		let query = { name: nameValue };
 		let update = { $set: { age: Number(ageValue), lastModified: Date.now() } };
-		try {
-			const before = await Student.find(query);
-			const _answer = await Student.updateMany(query, update);
-			const after = await Student.find(query);
-			let response = { _answer, after, before };
-			await res.status(201).send(response);
-		} catch (error) {
-			res.status(406).send(error);
-		}
+		const before = await Student.find(query);
+		const _answer = await Student.updateMany(query, update);
+		const after = await Student.find(query);
+		let response = { _answer, after, before };
+		await res.status(201).send(response);
+	} catch (error) {
+		res.status(406).send(error);
 	}
 };
 
 export const setEx5 = async (req, res) => {
-	let query = { name: req.params.name };
-	try {
-		const answer = await Student.deleteOne(query);
-		await res.status(201).send(answer);
-	} catch (error) {
-		res.status(406).send(error);
+	const nameValue = req.body.name;
+	if (typeof nameValue !== 'string') {
+		res.status(406).send({
+			errorString: 'String Expected for name',
+		});
+	} else {
+		let query = { name: nameValue };
+		try {
+			const answer = await Student.deleteOne(query);
+			await res.status(201).send(answer);
+		} catch (error) {
+			res.status(406).send(error);
+		}
 	}
 };
 
@@ -148,11 +156,18 @@ export const dropEx1 = async (req, res) => {
 };
 
 export const deleteId = async (req, res) => {
-	let query = { _id: req.params.id };
-	try {
-		const answer = await Student.findByIdAndDelete(query);
-		await res.send(answer);
-	} catch (error) {
-		res.status(406).send(error);
+	const id = req.body._id;
+	if (typeof id !== 'string') {
+		res.status(406).send({
+			errorString: 'String Expected for _id',
+		});
+	} else {
+		let query = { _id: id };
+		try {
+			const answer = await Student.findByIdAndDelete(query);
+			await res.send(answer);
+		} catch (error) {
+			res.status(406).send(error);
+		}
 	}
 };
