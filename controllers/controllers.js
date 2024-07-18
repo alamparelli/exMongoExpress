@@ -1,6 +1,6 @@
 import { Student } from '../models/students.js';
 
-export const getEx1 = async (req, res) => {
+export const getUsers = async (req, res) => {
 	try {
 		const answer = await Student.find();
 		res.status(200).json(answer);
@@ -9,42 +9,51 @@ export const getEx1 = async (req, res) => {
 	}
 };
 
-export const getEx3 = async (req, res) => {
-	let query = { city: req.params.city };
+export const getCity = async (req, res) => {
 	try {
+		if (!req.body.city) {
+			throw new Error();
+		}
+		let query = { city: req.body.city };
 		const answer = await Student.find(query);
-		res.json(answer);
+		res.status(200).json(answer);
 	} catch (error) {
 		res.status(406).send(error);
 	}
 };
 
-export const getEx5 = async (req, res) => {
-	let query = { name: req.params.name };
+export const getDelete = async (req, res) => {
 	try {
+		if (!req.body.name) {
+			throw new Error();
+		}
+		let query = { name: req.body.name };
 		const answer = await Student.find(query);
-		res.json(answer);
+		await res.status(200).send(answer);
 	} catch (error) {
 		res.status(406).send(error);
 	}
 };
 
-export const getEx7 = async (req, res) => {
-	let response = { age: { $gte: Number(req.params.age) } };
+export const getByAge = async (req, res) => {
 	try {
-		const answer = await Student.find(response);
+		if (!req.body.age) {
+			throw new Error();
+		}
+		let query = { age: { $gte: Number(req.body.age) } };
+		const answer = await Student.find(query);
 		res.json(answer);
 	} catch (error) {
 		res.status(406).send('Cannot filter by age');
 	}
 };
 
-export const getEx10 = async (req, res) => {
-	const pipeline = [
-		{ $match: { city: 'Brussels' } },
-		{ $group: { _id: '$city', count: { $sum: 1 } } },
-	];
+export const getSum = async (req, res) => {
 	try {
+		const pipeline = [
+			{ $match: { city: 'Brussels' } },
+			{ $group: { _id: '$city', count: { $sum: 1 } } },
+		];
 		const answer = await Student.aggregate(pipeline);
 		res.json(answer);
 	} catch (error) {
@@ -52,29 +61,40 @@ export const getEx10 = async (req, res) => {
 	}
 };
 
-export const setEx1 = async (req, res) => {
+export const createUser = async (req, res) => {
 	try {
 		const answer = await Student.insertMany(req.body);
 		await res.send(answer);
 	} catch (error) {
-		res.status(406).send(error);
+		res.status(406).json(error);
 	}
 };
 
-export const setEx4 = async (req, res) => {
-	let query = { name: req.params.name };
-	let update = { $set: { age: Number(req.params.age) } };
+export const updateAge = async (req, res) => {
 	try {
-		const answer = await Student.updateMany(query, update);
-		await res.status(201).send(answer);
+		if (!req.body.age || !req.body.name) {
+			throw new Error();
+		}
+		let query = { name: req.body.name };
+		let update = {
+			$set: { age: Number(req.body.age), lastModified: Date.now() },
+		};
+		const before = await Student.find(query);
+		const _answer = await Student.updateMany(query, update);
+		const after = await Student.find(query);
+		let response = { _answer, after, before };
+		await res.status(201).send(response);
 	} catch (error) {
 		res.status(406).send(error);
 	}
 };
 
-export const setEx5 = async (req, res) => {
-	let query = { name: req.params.name };
+export const deleteOneUser = async (req, res) => {
 	try {
+		if (!req.body.name) {
+			throw new Error('Name is Required');
+		}
+		let query = { name: req.body.name };
 		const answer = await Student.deleteOne(query);
 		await res.status(201).send(answer);
 	} catch (error) {
@@ -82,10 +102,13 @@ export const setEx5 = async (req, res) => {
 	}
 };
 
-export const setEx6 = async (req, res) => {
+export const setOne = async (req, res) => {
 	try {
-		const { age, city, name } = req.body;
-		const newStudent = new Student({ age: age, city: city, name: name });
+		const newStudent = new Student({
+			age: req.body.age,
+			city: req.body.city,
+			name: req.body.name,
+		});
 		newStudent.save();
 		await res.status(201).send(newStudent);
 	} catch (error) {
@@ -93,10 +116,10 @@ export const setEx6 = async (req, res) => {
 	}
 };
 
-export const setEx8 = async (req, res) => {
-	let query = { age: { $lte: 40 } };
-	let update = { $set: { status: 'active' } };
+export const setActive40 = async (req, res) => {
 	try {
+		let query = { age: { $lte: 40 } };
+		let update = { $set: { status: 'active' } };
 		const answer = await Student.updateMany(query, update);
 		await res.status(201).send(answer);
 	} catch (error) {
@@ -104,9 +127,9 @@ export const setEx8 = async (req, res) => {
 	}
 };
 
-export const setEx9 = async (req, res) => {
-	let query = { city: { $in: ['Ghent', 'Brussels'] } };
+export const deleteByCity = async (req, res) => {
 	try {
+		let query = { city: { $in: ['Ghent', 'Brussels'] } };
 		const answer = await Student.deleteMany(query);
 		await res.status(201).send(answer);
 	} catch (error) {
@@ -124,8 +147,8 @@ export const dropEx1 = async (req, res) => {
 };
 
 export const deleteId = async (req, res) => {
-	let query = { _id: req.params.id };
 	try {
+		let query = { _id: req.body._id };
 		const answer = await Student.findByIdAndDelete(query);
 		await res.send(answer);
 	} catch (error) {

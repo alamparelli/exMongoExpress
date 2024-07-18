@@ -1,4 +1,3 @@
-/* eslint-disable sort-imports */
 import cors from 'cors';
 import { configDotenv } from 'dotenv';
 import express from 'express';

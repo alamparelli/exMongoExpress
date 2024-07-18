@@ -1,40 +1,40 @@
-/* eslint-disable sort-imports */
 import express from 'express';
 
+import { getConStatus } from '../controllers/catchErrors.js';
 import {
+	createUser,
+	deleteByCity,
 	deleteId,
+	deleteOneUser,
 	dropEx1,
-	getEx1,
-	getEx10,
-	getEx3,
-	getEx5,
-	getEx7,
-	setEx1,
-	setEx4,
-	setEx5,
-	setEx6,
-	setEx8,
-	setEx9,
+	getByAge,
+	getCity,
+	getDelete,
+	getSum,
+	getUsers,
+	setActive40,
+	setOne,
+	updateAge,
 } from '../controllers/controllers.js';
-import { getConStatus } from '../controllers/dbErrors.js';
+import { isBodyValuesValids } from '../middleWare/validateBody.js';
 
 const router = express.Router();
 //! Important to remember
 router.use(express.json());
 router.use(getConStatus);
+router.use(isBodyValuesValids);
 
-router.route('/createUser').post(setEx1); //and createone (post)
-router.route('/users').get(getEx1); //*findall (get)
-router.route('/city/:city').get(getEx3); //* find by City
-router.route('/updateAge/:name/:age').put(setEx4); //* updateAge
-router.route('/deleteOne/:name').get(getEx5).delete(setEx5); //* deletOne
-router.route('/insertOne').put(setEx6); //* insertOne
-router.route('/age').get(getEx7); //* find by age
-router.route('/age/:age').get(getEx7); //* find by age
-router.route('/setActive40').put(setEx8); //* add active status when age below 40
-router.route('/deleteByCity').get(getEx1).delete(setEx9); //* deleteMany by City or City & Get all result
-router.route('/sumBrussels').delete(getEx10); //* Get sum of document where Brussels
-router.route('/id/:id').delete(deleteId);
+router.route('/createUser').post(createUser); //and createone (post)
+router.route('/users').get(getUsers); //*findall (get)
+router.route('/city').get(getCity); //* find by City
+router.route('/updateAge').put(updateAge); //* updateAge
+router.route('/deleteOne').get(getDelete).delete(deleteOneUser); //* deletOne
+router.route('/insertOne').put(setOne); //* insertOne
+router.route('/age').get(getByAge); //* find by age
+router.route('/setActive40').put(setActive40); //* add active status when age below 40
+router.route('/deleteByCity').get(getUsers).delete(deleteByCity); //* deleteMany by City or City & Get all result
+router.route('/sumBrussels').delete(getSum); //* Get sum of document where Brussels
+router.route('/id').delete(deleteId);
 router.route('/dropEx1').delete(dropEx1); //* delete
 
 export default router;

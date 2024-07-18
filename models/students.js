@@ -11,7 +11,7 @@ const userSchema = new mongoose.Schema({
 		required: true,
 		type: String,
 	},
-	lastmModified: {
+	lastModified: {
 		required: false,
 		type: Date,
 	},
