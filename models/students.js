@@ -4,11 +4,11 @@ const userSchema = new mongoose.Schema({
 	age: {
 		max: 120,
 		min: 1,
-		required: true,
+		required: [true, 'Age Required'],
 		type: Number,
 	},
 	city: {
-		required: true,
+		required: [true, 'City Required'],
 		type: String,
 	},
 	lastModified: {
@@ -16,9 +16,8 @@ const userSchema = new mongoose.Schema({
 		type: Date,
 	},
 	name: {
-		required: true,
+		required: [true, 'Name required'],
 		type: String,
-		unique: true,
 	},
 	status: {
 		enum: ['active', 'inactive'],
